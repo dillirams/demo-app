@@ -1,0 +1,23 @@
+name: Deploy to dev
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+   deploy_Devs:
+    name: Deploy in dev branches
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH Into server
+        run: |
+          echo ${{ secrets.SSH_KEY}} &> /shh_key
+          ssh -i /ssh_key ubuntu@43.205.124.54 
+          cd demo-app && git pull
+          npm install
+          npm run build
+          pm2 restart frontend
+          pm2 restart http-server
+          pm2 restart websocket
+
